@@ -1,0 +1,31 @@
+{
+  "name": "bitmexapi",
+  "version": "1.0.0",
+  "description": "BitMEX Socket and REST API handler.",
+  "main": "src/BitmexAPI.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/not-wilson/BitmexAPI.git"
+  },
+  "keywords": [
+    "bitmex",
+    "api",
+    "websocket",
+    "rest",
+    "crypto",
+    "currency",
+    "exchange"
+  ],
+  "author": "notwilson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/not-wilson/BitmexAPI/issues"
+  },
+  "homepage": "https://github.com/not-wilson/BitmexAPI#readme",
+  "dependencies": {
+    "ws": "^7.0.0"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "tradedesk",
+  "version": "1.0.0",
+  "description": "Multi-Account Desktop trading application for BitMEX. In Electron.",
+  "main": "src/TradeDesk.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/not-wilson/TradeDesk.git"
+  },
+  "keywords": [
+    "trade",
+    "crypto",
+    "currency",
+    "bitmex",
+    "eth",
+    "btc"
+  ],
+  "author": "notwilson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/not-wilson/TradeDesk/issues"
+  },
+  "homepage": "https://github.com/not-wilson/TradeDesk#readme",
+  "dependencies": {
+    "electron": "^5.0.2"
+  }
+}

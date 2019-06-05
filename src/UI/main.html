@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Electron Base</title>
+        
+        <!-- Electron import workaround - https://stackoverflow.com/questions/32621988/electron-jquery-is-not-defined -->
+        <script>if (typeof module === 'object') {window.module = module; module = undefined};</script>
+
+        <!-- Require jQuery -->
+        <script src="./jquery/jquery.js"></script>
+        <script src="./jquery/jquery-ui.js"></script>
+        <link rel="stylesheet" type="text/css" href="./jquery/themes/ui-darkness/jquery-ui.min.css">
+        
+        <!-- /Electron import workaround -->
+        <script>if (window.module) module = window.module;</script>
+
+        <!-- My Stuff -->
+        <script src=""></script>
+        <link rel="stylesheet" type="text/css" href="">
+
+        <script>
+            // Requirements
+            const ipcRenderer   = require('electron').ipcRenderer
+            //const remote        = require('electron').remote
+            const shell         = require('electron').shell
+
+            $('body').ready(() => {
+                
+                // Force external links into local browser.
+                $('a').click(e => {
+                    if($(e.target).attr('href').substring(0, 1) !== "#") {
+                        e.preventDefault()
+                        shell.openExternal($(e.target).attr('href'))
+                    }
+                })
+
+            })
+
+            let midswap = null
+
+            // Swapping to a different window.
+            ipcRenderer.on('startswap', () => {
+                midswap = $('body').html()
+                $('body').html("Loading...")
+            })
+
+            // Finished swapping to a different window.
+            ipcRenderer.on('swapover', () => {
+                $('body').html(midswap)
+            })
+
+            ipcRenderer.on('token', (e, t) => {
+                $('body').html(t)
+            })
+        </script>
+
+    </head>
+
+    <body>
+        Loreum Ipsum etc...
+    </body>    
+</html>
