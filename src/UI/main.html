@@ -1,8 +1,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>Electron Base</title>
-        
+        <title>Trading Desk</title>
         <!-- Electron import workaround - https://stackoverflow.com/questions/32621988/electron-jquery-is-not-defined -->
         <script>if (typeof module === 'object') {window.module = module; module = undefined};</script>
 
@@ -10,53 +9,88 @@
         <script src="./jquery/jquery.js"></script>
         <script src="./jquery/jquery-ui.js"></script>
         <link rel="stylesheet" type="text/css" href="./jquery/themes/ui-darkness/jquery-ui.min.css">
-        
+
+        <!-- Require TradingView Chart Widget -->
+        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+
         <!-- /Electron import workaround -->
         <script>if (window.module) module = window.module;</script>
 
         <!-- My Stuff -->
         <script src=""></script>
-        <link rel="stylesheet" type="text/css" href="">
+        <link rel="stylesheet" type="text/css" href="./style.css">
 
         <script>
             // Requirements
+            const remote        = require('electron').remote
             const ipcRenderer   = require('electron').ipcRenderer
-            //const remote        = require('electron').remote
-            const shell         = require('electron').shell
+            const me            = remote.getCurrentWindow()
+
+            Number.prototype.clean = function() { return this.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
 
             $('body').ready(() => {
-                
-                // Force external links into local browser.
-                $('a').click(e => {
-                    if($(e.target).attr('href').substring(0, 1) !== "#") {
-                        e.preventDefault()
-                        shell.openExternal($(e.target).attr('href'))
-                    }
-                })
+                $('#loadingScreen').hide()
 
+                $('button').button()
+
+                // Build TradingView Chart.
+                new TradingView.widget({ "autosize": true, "symbol": "BITMEX:XBTUSD", "interval": "D", "timezone": "Etc/UTC", "theme": "Dark", "style": "1", "locale": "en", "toolbar_bg": "#f1f3f6", "enable_publishing": true, "hide_side_toolbar": false, "container_id": "tradingviewChart" });
             })
-
-            let midswap = null
 
             // Swapping to a different window.
-            ipcRenderer.on('startswap', () => {
-                midswap = $('body').html()
-                $('body').html("Loading...")
-            })
+            ipcRenderer.on('swap-start', () => $('#loadingScreen').show())
 
-            // Finished swapping to a different window.
-            ipcRenderer.on('swapover', () => {
-                $('body').html(midswap)
-            })
+            ipcRenderer.on('swap-end', () => $('#loadingScreen').hide())
 
-            ipcRenderer.on('token', (e, t) => {
-                $('body').html(t)
+            ipcRenderer.on('trade', (event, message) => {
+                const $trades = $('#trades')
+                const trades = []
+                
+                message.data.map(transfer => {
+                    const x = trades.map((t, i) => { if(t.timestamp === transfer.timestamp) return i }) // Does not stop lookin
+                    const trade = trades[x[0]] || null
+                    if(trade) trade.size += transfer.size
+                    else trades.push(transfer)
+                })
+
+                trades.map(trade => {
+                    $trades.prepend(`<div class="${trade.side}">${Number(trade.size).clean()} @ ${trade.price}</div>`)
+                })
             })
         </script>
 
     </head>
 
     <body>
-        Loreum Ipsum etc...
+        <div id="loadingScreen"></div>
+        <div id="main">
+            <!-- TradingView Widget BEGIN -->
+            <div class="tradingview-widget-container">
+                <div id="tradingviewChart"></div>
+            </div>
+        </div>
+        
+        <div id="menu">
+            
+            <div class="box">
+                <h1>Positions</h1>
+                <div id="positions">WilsonBOT 1000 @ 5085</div>
+                <button>Limit</button><button>Market</button>
+                <br>
+                <div>notwilson 0 @ REKT</div>
+                <button>Cry</button><button>Double or Nothing</button>
+            </div>
+
+            <div class="box">
+                <h1>Orders</h1>
+                <button>Generate</button>
+            </div>
+
+            <div class="box">
+                <h1>Recent Trades</h1>
+                <div id="trades"></div>
+            </div>
+        </div>
     </body>    
 </html>
+
