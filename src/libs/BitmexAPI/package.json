@@ -26,6 +26,6 @@
   },
   "homepage": "https://github.com/not-wilson/BitmexAPI#readme",
   "dependencies": {
-    "ws": "^7.0.0"
+    "ws": "^7.4.6"
   }
 }
